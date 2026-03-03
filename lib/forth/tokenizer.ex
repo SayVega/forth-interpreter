@@ -12,7 +12,9 @@ defmodule Forth.Tokenizer do
         number
 
       _ ->
-        String.to_atom(token)
+        token
+        |> String.upcase()
+        |> String.to_atom()
     end
   end
 

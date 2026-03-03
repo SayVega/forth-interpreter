@@ -23,6 +23,46 @@ defmodule Forth.Executor do
     {:error, :stack_underflow}
   end
 
+  defp process_token(:-, [a, b | rest]) do
+    {:ok, [b - a | rest]}
+  end
+
+  defp process_token(:-, _stack) do
+    {:error, :stack_underflow}
+  end
+
+  defp process_token(:*, [a, b | rest]) do
+  {:ok, [b * a | rest]}
+  end
+
+  defp process_token(:*, _stack) do
+    {:error, :stack_underflow}
+  end
+
+  defp process_token(:/, [0, _b | _rest]) do
+    {:error, :division_by_zero}
+  end
+
+  defp process_token(:/, [a, b | rest]) do
+    {:ok, [div(b, a) | rest]}
+  end
+
+  defp process_token(:/, _stack) do
+    {:error, :stack_underflow}
+  end
+
+  defp process_token(:MOD, [a, b | rest]) do
+    {:ok, [rem(b, a) | rest]}
+  end
+
+  defp process_token(:MOD, [0, _b | _rest]) do
+    {:error, :division_by_zero}
+  end
+
+  defp process_token(:MOD, _stack) do
+    {:error, :stack_underflow}
+  end
+
   defp process_token(_unknown, _stack) do
     {:error, :unknown_token}
   end
