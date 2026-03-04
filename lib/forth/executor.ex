@@ -39,12 +39,12 @@ defmodule Forth.Executor do
     {:error, :stack_underflow}
   end
 
-  defp process_token(:/, [0, _b | _rest]) do
-    {:error, :division_by_zero}
-  end
-
   defp process_token(:/, [a, b | rest]) do
     {:ok, [div(b, a) | rest]}
+  end
+
+  defp process_token(:/, [0, _b | _rest]) do
+    {:error, :division_by_zero}
   end
 
   defp process_token(:/, _stack) do
@@ -59,7 +59,39 @@ defmodule Forth.Executor do
     {:error, :division_by_zero}
   end
 
-  defp process_token(:MOD, _stack) do
+    defp process_token(:MOD, _stack) do
+    {:error, :stack_underflow}
+  end
+
+  defp process_token(:DUP, [a | rest]) do
+    {:ok, [a, a | rest]}
+  end
+
+  defp process_token(:DUP, _stack) do
+    {:error, :stack_underflow}
+  end
+
+  defp process_token(:DROP, [_a | rest]) do
+    {:ok, rest}
+  end
+
+  defp process_token(:DROP, _stack) do
+    {:error, :stack_underflow}
+  end
+
+  defp process_token(:OVER, [a, b | rest]) do
+    {:ok, [b, a, b | rest]}
+  end
+
+  defp process_token(:OVER, _stack) do
+    {:error, :stack_underflow}
+  end
+
+  defp process_token(:SWAP, [a, b | rest]) do
+    {:ok, [b, a | rest]}
+  end
+
+  defp process_token(:SWAP, _stack) do
     {:error, :stack_underflow}
   end
 
