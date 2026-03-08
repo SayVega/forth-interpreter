@@ -19,10 +19,43 @@ defmodule Forth.Executor do
       end)
 
     case result do
+      {:ok, %{defining: true}} -> {:error, "unterminated definition"}
       {:ok, %{stack: stack}} -> {:ok, Enum.reverse(stack)}
       error -> error
     end
   end
+
+## Word definition
+
+  defp process_token(:":", %{defining: true}) do
+  {:error, "already defining a word"}
+  end
+
+  defp process_token(:":", state) do
+    {:ok, %{state | defining: true, current_word: :expect_name, current_definition: []}}
+  end
+
+  defp process_token(token, %{defining: true, current_word: :expect_name} = _state)
+  when is_integer(token) or token == :";" do
+    {:error, "invalid word definition"}
+  end
+
+  defp process_token(token, %{defining: true, current_word: :expect_name} = state) do
+    {:ok, %{state | current_word: token}}
+  end
+
+  defp process_token(token, %{defining: true, current_definition: defn, current_word: word} = state)
+    when  token != :";" and word != :expect_name do
+      {:ok, %{state | current_definition: [token | defn]}}
+  end
+
+  defp process_token(:";", %{defining: true, current_word: word, current_definition: defn, dictionary: dictionary} = state)
+    when is_atom(word) do
+      new_dictionary = Map.put(dictionary, word, Enum.reverse(defn))
+      {:ok, %{state | defining: false, dictionary: new_dictionary, current_word: nil, current_definition: []}}
+  end
+
+## Pushing numbers
 
   defp process_token(number, %{stack: stack} = state) when is_integer(number) do
     {:ok, %{state | stack: [number | stack]}}
@@ -113,10 +146,58 @@ defmodule Forth.Executor do
   end
 
   defp process_token(:ROT, %{stack: [a, b, c | rest]} = state) do
-    {:ok, %{state | stack: [b, a, c | rest]}}
+    {:ok, %{state | stack: [c, a, b | rest]}}
   end
 
   defp process_token(:ROT, %{stack: _stack} = _state) do
+    {:error, "stack underflow"}
+  end
+
+  defp process_token(:NIP, %{stack: [a, _b | rest]} = state) do
+    {:ok, %{state | stack: [a | rest]}}
+  end
+
+  defp process_token(:NIP, %{stack: _stack} = _state) do
+    {:error, "stack underflow"}
+  end
+
+  defp process_token(:TUCK, %{stack: [a, b | rest]} = state) do
+    {:ok, %{state | stack: [a, b, a | rest]}}
+  end
+
+  defp process_token(:TUCK, %{stack: _stack} = _state) do
+    {:error, "stack underflow"}
+  end
+
+  defp process_token(:"2DUP", %{stack: [a, b | rest]} = state) do
+    {:ok, %{state | stack: [a, b, a, b | rest]}}
+  end
+
+  defp process_token(:"2DUP", %{stack: _stack} = _state) do
+    {:error, "stack underflow"}
+  end
+
+  defp process_token(:"2DROP", %{stack: [_a, _b | rest]} = state) do
+    {:ok, %{state | stack: rest}}
+  end
+
+  defp process_token(:"2DROP", %{stack: _stack} = _state) do
+    {:error, "stack underflow"}
+  end
+
+  defp process_token(:"2SWAP", %{stack: [a, b, c, d | rest]} = state) do
+    {:ok, %{state | stack: [c, d, a, b | rest]}}
+  end
+
+  defp process_token(:"2SWAP", %{stack: _stack} = _state) do
+    {:error, "stack underflow"}
+  end
+
+  defp process_token(:"2OVER", %{stack: [a, b, c, d | rest]} = state) do
+    {:ok, %{state | stack: [c, d, a, b, c, d | rest]}}
+  end
+
+  defp process_token(:"2OVER", %{stack: _stack} = _state) do
     {:error, "stack underflow"}
   end
 
@@ -186,40 +267,12 @@ defmodule Forth.Executor do
     {:error, "stack underflow"}
   end
 
-## Word definition
-
-  defp process_token(:":", %{defining: true}) do
-  {:error, "invalid word definition"}
-  end
-
-  defp process_token(:":", state) do
-    {:ok, %{state | defining: true, current_word: :expect_name, current_definition: []}}
-  end
-
-  defp process_token(token, %{defining: true, current_word: :expect_name} = _state)
-  when is_integer(token) do
-    {:error, "invalid word name"}
-  end
-
-  defp process_token(token, %{defining: true, current_word: :expect_name} = state) do
-    {:ok, %{state | current_word: token}}
-  end
-
-  defp process_token(token, %{defining: true, current_definition: defn} = state)
-    when  token != :";" do
-      {:ok, %{state | current_definition: [token | defn]}}
-  end
-
-  defp process_token(:";", %{defining: true, current_word: word, current_definition: defn, dictionary: dictionary} = state)
-    when is_atom(word) do
-      new_dictionary = Map.put(dictionary, word, Enum.reverse(defn))
-      {:ok, %{state | defining: false, dictionary: new_dictionary, current_word: nil, current_definition: []}}
-  end
+## Dictionary execution
 
   defp process_token(token, %{dictionary: dictionary} = state) when is_atom(token) do
     case Map.get(dictionary, token) do
       nil ->
-        {:error, :unknown_word}
+        {:error, "unknown word: #{String.downcase(Atom.to_string(token))}"}
 
       definition ->
         Enum.reduce_while(definition, {:ok, state}, fn def_token, {:ok, state} ->
@@ -229,10 +282,11 @@ defmodule Forth.Executor do
           end
         end)
     end
-
   end
 
+## Undefined words
+
   defp process_token(_unknown, %{stack: _stack}) do
-    {:error, :unknown_token}
+    {:error, "undefined word"}
   end
 end

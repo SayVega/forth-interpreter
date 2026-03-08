@@ -273,6 +273,10 @@ defmodule ForthTest do
     test "mixed case arithmetic" do
       assert eval("1 2 +") == eval("1 2 PLUS") || {:ok, [3]}
     end
+
+    test "custom words are case insensitive" do
+      assert eval(": double dup + ; 5 DOUBLE") == {:ok, [10]}
+    end
   end
 
   describe "user-defined words" do
@@ -282,6 +286,10 @@ defmodule ForthTest do
 
     test "can define word using other operations" do
       assert eval(": square dup * ; 4 square") == {:ok, [16]}
+    end
+
+    test "word definitions can be redefined" do
+      assert eval(": foo 1 ; : foo 2 ; foo") == {:ok, [2]}
     end
 
     test "can define word using other custom words" do
@@ -386,6 +394,39 @@ defmodule ForthTest do
 
     test "can clear initial stack" do
       assert eval("drop drop", [1, 2]) == {:ok, []}
+    end
+  end
+
+  describe "delimiters and unusual whitespace" do
+    test "handles multiple spaces between tokens" do
+      assert eval("1      2     +") == {:ok, [3]}
+    end
+
+    test "handles newlines as delimiters" do
+      assert eval("1\n2\n+") == {:ok, [3]}
+    end
+
+    test "handles tabs and mixed whitespace" do
+      # \t es un tabulador, \r es un retorno de carro
+      assert eval("1\t2\r\n+") == {:ok, [3]}
+    end
+
+    test "handles leading and trailing whitespace" do
+      assert eval("   1 2 +   ") == {:ok, [3]}
+    end
+
+    test "handles complex spacing in user-defined words" do
+      input = """
+      :
+      double
+      dup
+      +
+      ;
+      5
+      double
+      """
+
+      assert eval(input) == {:ok, [10]}
     end
   end
 end
