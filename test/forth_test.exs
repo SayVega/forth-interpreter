@@ -11,7 +11,7 @@ defmodule ForthTest do
       assert eval("5") == {:ok, [5]}
     end
 
-    test "parses single negative integer" do
+    test "parses single negative integer"
       assert eval("-5") == {:ok, [-5]}
     end
 

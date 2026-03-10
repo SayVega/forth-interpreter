@@ -1,0 +1,75 @@
+<div class="max-w-4xl mx-auto mt-10">
+
+  <h1 class="text-3xl font-bold mb-6 text-center">
+    Forth Interpreter
+  </h1>
+
+  <form phx-submit="run" class="space-y-4">
+
+    <textarea
+      name="program"
+      rows="1"
+      class="w-full font-mono text-black border rounded p-3 bg-white resize-y"
+      placeholder="Write your Forth program here..."
+    ><%= @program %></textarea>
+
+    <div class="flex justify-center">
+      <button
+        type="submit"
+        class="w-1/2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold"
+      >
+        Run interpreter
+      </button>
+    </div>
+
+  </form>
+
+  <div class="mt-8">
+
+    <h2 class="text-xl font-semibold mb-2">
+      Result
+    </h2>
+
+    <pre class="bg-black text-green-400 p-4 rounded font-mono">
+<%= @result %>
+    </pre>
+
+  </div>
+
+  <div class="mt-10">
+
+    <details>
+
+      <summary class="text-xl font-semibold cursor-pointer">
+        History
+      </summary>
+
+      <div class="space-y-4 mt-4">
+
+        <%= for {p, r} <- @history do %>
+
+          <div class="border rounded p-4">
+
+            <div class="text-sm text-gray-500 mb-1">
+              Program
+            </div>
+
+            <pre class="bg-gray-100 p-2 font-mono text-black"><%= p %></pre>
+
+            <div class="text-sm text-gray-500 mt-3 mb-1">
+              Result
+            </div>
+
+            <pre class="bg-black text-green-400 p-2 font-mono"><%= r %></pre>
+
+          </div>
+
+        <% end %>
+
+      </div>
+
+    </details>
+
+  </div>
+
+</div>

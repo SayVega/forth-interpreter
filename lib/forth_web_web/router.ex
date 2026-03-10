@@ -17,7 +17,7 @@ defmodule ForthWebWeb.Router do
   scope "/", ForthWebWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", ForthLive
   end
 
   # Other scopes may use custom stacks.
