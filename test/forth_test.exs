@@ -11,7 +11,7 @@ defmodule ForthTest do
       assert eval("5") == {:ok, [5]}
     end
 
-    test "parses single negative integer"
+    test "parses single negative integer" do
       assert eval("-5") == {:ok, [-5]}
     end
 
@@ -407,7 +407,6 @@ defmodule ForthTest do
     end
 
     test "handles tabs and mixed whitespace" do
-      # \t es un tabulador, \r es un retorno de carro
       assert eval("1\t2\r\n+") == {:ok, [3]}
     end
 
@@ -425,7 +424,6 @@ defmodule ForthTest do
       5
       double
       """
-
       assert eval(input) == {:ok, [10]}
     end
   end

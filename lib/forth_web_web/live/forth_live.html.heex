@@ -9,14 +9,16 @@
     <textarea
       name="program"
       rows="1"
-      class="w-full font-mono text-black border rounded p-3 bg-white resize-y"
-      placeholder="Write your Forth program here..."
-    ><%= @program %></textarea>
+      class="w-full font-mono text-black border rounded p-3 m-0 bg-white resize-y
+      hover:bg-gray-300
+      focus:outline-none
+      focus-within:ring-2 focus-within:ring-cyan-400 focus-within:border-cyan-400"
+      placeholder="Write your Forth program here..."><%= @program %></textarea>
 
     <div class="flex justify-center">
       <button
         type="submit"
-        class="w-1/2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold"
+        class="w-1/2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold cursor-pointer"
       >
         Run interpreter
       </button>
@@ -24,52 +26,30 @@
 
   </form>
 
+    <h3 class="text-2xl font-bold m-6 text-center">Or</h3>
+
+  <form phx-change="upload">
+    <div class="flex justify-center">
+      <label
+        class="w-1/2 flex items-center justify-center border rounded p-2
+              bg-gray-100 text-gray-800 font-medium
+              cursor-pointer
+              hover:bg-gray-300
+              transition">
+        Upload Forth file
+      <.live_file_input upload={@uploads.forth_file} class="hidden"/>
+      </label>
+    </div>
+  </form>
+  
+
   <div class="mt-8">
 
     <h2 class="text-xl font-semibold mb-2">
       Result
     </h2>
 
-    <pre class="bg-black text-green-400 p-4 rounded font-mono">
-<%= @result %>
-    </pre>
+    <pre class="bg-black text-green-400 p-4 rounded font-mono"><%=@result %></pre>
 
   </div>
-
-  <div class="mt-10">
-
-    <details>
-
-      <summary class="text-xl font-semibold cursor-pointer">
-        History
-      </summary>
-
-      <div class="space-y-4 mt-4">
-
-        <%= for {p, r} <- @history do %>
-
-          <div class="border rounded p-4">
-
-            <div class="text-sm text-gray-500 mb-1">
-              Program
-            </div>
-
-            <pre class="bg-gray-100 p-2 font-mono text-black"><%= p %></pre>
-
-            <div class="text-sm text-gray-500 mt-3 mb-1">
-              Result
-            </div>
-
-            <pre class="bg-black text-green-400 p-2 font-mono"><%= r %></pre>
-
-          </div>
-
-        <% end %>
-
-      </div>
-
-    </details>
-
-  </div>
-
 </div>
