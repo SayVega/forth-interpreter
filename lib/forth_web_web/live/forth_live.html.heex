@@ -9,6 +9,7 @@
     <textarea
       name="program"
       rows="1"
+      maxlenght="10000"
       class="w-full font-mono text-black border rounded p-3 m-0 bg-white resize-y
       hover:bg-gray-300
       focus:outline-none
@@ -23,10 +24,9 @@
         Run interpreter
       </button>
     </div>
-
   </form>
 
-    <h3 class="text-2xl font-bold m-6 text-center">Or</h3>
+  <h3 class="text-2xl font-bold m-6 text-center">Or</h3>
 
   <form phx-change="upload">
     <div class="flex justify-center">
@@ -36,20 +36,53 @@
               cursor-pointer
               hover:bg-gray-300
               transition">
-        Upload Forth file
+        Upload Forth file (Max size 100KB)
       <.live_file_input upload={@uploads.forth_file} class="hidden"/>
       </label>
     </div>
   </form>
   
-
   <div class="mt-8">
-
     <h2 class="text-xl font-semibold mb-2">
       Result
     </h2>
-
     <pre class="bg-black text-green-400 p-4 rounded font-mono"><%=@result %></pre>
+  </div>
 
+  <div class="mt-10">
+    <details>
+      <summary class="text-xl font-semibold cursor-pointer">
+        History
+      </summary>
+
+      <div class="space-y-4 mt-4">
+        <%= for eval <- @history do %>
+          <div class="border rounded p-4">
+            <div class="text-sm text-gray-500 mb-1">
+              Source: <%= eval.source %>
+            </div>
+
+            <details>
+              <summary class="cursor-pointer text-xs text-blue-600 mb-1">
+                show program
+              </summary>
+              <pre class="bg-gray-100 p-2 font-mono text-black overflow-hidden">
+            <%= eval.program %>
+              </pre>
+            </details>
+
+            <div class="text-sm text-gray-500 mt-3 mb-1">
+              Result
+            </div>
+            <pre class="bg-black text-green-400 p-2 font-mono"><%= eval.result %></pre>
+            <div class="text-xs text-gray-400 mt-2">
+              <%= eval.inserted_at %>
+            </div>
+
+          </div>
+        <% end %>
+      </div>
+    </details>
   </div>
 </div>
+

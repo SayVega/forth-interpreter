@@ -1,13 +1,24 @@
+import Ecto.Query
+alias ForthWeb.Repo
+alias ForthWeb.ForthWeb.Evaluations.Evaluation
+
 defmodule ForthWebWeb.ForthLive do
   use ForthWebWeb, :live_view
 
   def mount(_, _, socket) do
+    history =
+  Repo.all(
+    from e in Evaluation,
+      order_by: [desc: e.inserted_at]
+  )
+
     socket =
       socket
-      |> assign(program: "", result: "")
+      |> assign(program: "", result: "", history: history)
       |> allow_upload(:forth_file,
           accept: :any,
           max_entries: 1,
+          max_file_size: 100_000,
           auto_upload: true,
           progress: &handle_progress/3
         )
@@ -28,7 +39,22 @@ defmodule ForthWebWeb.ForthLive do
           {:error, err} -> "Error: #{err}"
         end
 
-      {:noreply, assign(socket, result: result)}
+      filename = entry.client_name
+      eval =
+        %Evaluation{}
+        |> Evaluation.changeset(%{
+          program: program,
+          result: result,
+          source: filename
+        })
+        |> Repo.insert!()
+
+      socket =
+        socket
+        |> assign(result: result)
+        |> Phoenix.Component.update(:history, fn h -> [eval | h] end)
+
+      {:noreply, socket}
     else
       {:noreply, socket}
     end
@@ -45,10 +71,20 @@ defmodule ForthWebWeb.ForthLive do
         {:error, err} ->"Error: #{err}"
       end
 
-    {:noreply,
-    assign(socket,
+  {:ok, eval} =
+    %Evaluation{}
+    |> Evaluation.changeset(%{
       program: program,
-      result: result
-    )}
+      result: result,
+      source: "manual"
+    })
+    |> Repo.insert()
+
+  socket =
+    socket
+    |> assign(program: program, result: result)
+    |> Phoenix.Component.update(:history, fn h -> [eval | h] end)
+
+  {:noreply, socket}
   end
 end
