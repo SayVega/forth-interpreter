@@ -40,6 +40,20 @@
       <.live_file_input upload={@uploads.forth_file} class="hidden"/>
       </label>
     </div>
+      <div class="mt-4 flex flex-col items-center justify-center space-y-2 text-center">
+        <%= for entry <- @uploads.forth_file.entries do %>
+          <%= for error <- upload_errors(@uploads.forth_file, entry) do %>
+            <div class="w-full max-w-md bg-red-50 border border-red-200 text-red-600 text-xs py-2 px-4 rounded font-bold shadow-sm">
+              Error: <%= if error == :too_large, do: "File exceeds the 100KB limit.", else: Atom.to_string(error) %>
+            </div>
+          <% end %>
+        <% end %>
+        <%= if @upload_error do %>
+          <div class="w-full max-w-md bg-red-50 border border-red-200 text-red-600 text-xs py-2 px-4 rounded font-bold shadow-sm">
+            Error: <%= @upload_error %>
+          </div>
+        <% end %>
+      </div>
   </form>
   
   <div class="mt-8">
