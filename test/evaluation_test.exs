@@ -1,8 +1,8 @@
-defmodule ForthWeb.Evaluations.EvaluationTest do
+defmodule Forth.EvaluationTest do
   use ForthWeb.DataCase
 
-  alias ForthWeb.Repo
-  alias ForthWeb.ForthWeb.Evaluations.Evaluation
+  alias Forth.Repo
+  alias Forth.Evaluation
 
   import Ecto.Query
 

@@ -66,8 +66,8 @@
               <summary class="cursor-pointer text-xs text-blue-600 mb-1">
                 show program
               </summary>
-              <pre class="bg-gray-100 p-2 font-mono text-black overflow-hidden">
-            <%= eval.program %>
+              <pre class="bg-gray-100 p-2 font-mono text-black overflow-hidden italic">
+                <%= if eval.program == "", do: "[Empty Program]", else: eval.program %>
               </pre>
             </details>
 

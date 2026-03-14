@@ -1,4 +1,4 @@
-defmodule ForthWeb.ForthWeb.Evaluations.Evaluation do
+defmodule Forth.Evaluation do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -12,7 +12,8 @@ defmodule ForthWeb.ForthWeb.Evaluations.Evaluation do
 
   def changeset(evaluation, attrs) do
     evaluation
-    |> cast(attrs, [:program, :result, :source])
-    |> validate_required([:program, :result, :source])
+    |> cast(attrs, [:program], empty_values: [])
+    |> cast(attrs, [:result, :source])
+    |> validate_required([:result, :source])
   end
 end

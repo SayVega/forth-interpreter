@@ -8,28 +8,19 @@
 import Config
 
 config :forth_web,
-  ecto_repos: [ForthWeb.Repo],
+  ecto_repos: [Forth.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configure the endpoint
-config :forth_web, ForthWebWeb.Endpoint,
+config :forth_web, ForthWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [html: ForthWebWeb.ErrorHTML, json: ForthWebWeb.ErrorJSON],
+    formats: [html: ForthWeb.ErrorHTML, json: ForthWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: ForthWeb.PubSub,
+  pubsub_server: Forth.PubSub,
   live_view: [signing_salt: "6ppIszkH"]
-
-# Configure the mailer
-#
-# By default it uses the "Local" adapter which stores the emails
-# locally. You can see the emails in your browser, at "/dev/mailbox".
-#
-# For production it's recommended to configure a different adapter
-# at the `config/runtime.exs`.
-config :forth_web, ForthWeb.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,

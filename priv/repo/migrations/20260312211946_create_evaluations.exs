@@ -1,4 +1,4 @@
-defmodule ForthWeb.Repo.Migrations.CreateEvaluations do
+defmodule Forth.Repo.Migrations.CreateEvaluations do
   use Ecto.Migration
 
   def change do
