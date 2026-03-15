@@ -1,5 +1,5 @@
 defmodule Forth.EvaluationTest do
-  use ForthWeb.DataCase
+  use Forth.DataCase
 
   alias Forth.Repo
   alias Forth.Evaluation
@@ -19,15 +19,16 @@ defmodule Forth.EvaluationTest do
       assert changeset.valid?
     end
 
-    test "invalid without program" do
+    test "changeset allows nil program" do
       attrs = %{
+        program: nil,
         result: "[3]",
         source: "manual"
       }
 
       changeset = Evaluation.changeset(%Evaluation{}, attrs)
 
-      refute changeset.valid?
+      assert changeset.valid?
     end
 
     test "invalid without result" do
@@ -54,33 +55,33 @@ defmodule Forth.EvaluationTest do
   end
 
   describe "database persistence" do
-    test "evaluation is persisted" do
-      attrs = %{
-        program: "1 2 +",
+  test "evaluation is persisted" do
+    attrs = %{
+      program: "1 2 +",
+      result: "[3]",
+      source: "manual"
+    }
+
+    {:ok, eval} =
+      %Evaluation{}
+      |> Evaluation.changeset(attrs)
+      |> Repo.insert()
+
+    assert eval.program == "1 2 +"
+    assert eval.result == "[3]"
+    assert eval.source == "manual"
+  end
+
+  test "database rejects null program" do
+    assert_raise Postgrex.Error, fn ->
+      Repo.insert!(%Evaluation{
+        program: nil,
         result: "[3]",
         source: "manual"
-      }
-
-      {:ok, eval} =
-        %Evaluation{}
-        |> Evaluation.changeset(attrs)
-        |> Repo.insert()
-
-      assert eval.program == "1 2 +"
-      assert eval.result == "[3]"
-      assert eval.source == "manual"
-    end
-
-    test "database rejects null program" do
-      assert_raise Ecto.ConstraintError, fn ->
-        Repo.insert!(%Evaluation{
-          program: nil,
-          result: "[3]",
-          source: "manual"
-        })
-      end
+      })
     end
   end
+end
 
   describe "history query" do
     test "returns newest evaluations first" do

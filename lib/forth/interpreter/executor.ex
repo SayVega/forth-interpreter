@@ -44,9 +44,20 @@ defmodule Forth.Executor do
     {:ok, %{state | current_word: token}}
   end
 
-  defp process_token(token, %{defining: true, current_definition: defn, current_word: word} = state)
+  defp process_token(token, %{defining: true, current_definition: defn, current_word: word, dictionary: dictionary} = state)
     when  token != :";" and word != :expect_name do
-      {:ok, %{state | current_definition: [token | defn]}}
+      cond do
+      is_integer(token) ->
+        {:ok, %{state | current_definition: [token | defn]}}
+
+      Map.has_key?(dictionary, token) or
+      token in [:+, :-, :*, :/, :MOD, :DUP, :DROP, :OVER, :SWAP, :ROT, :NIP, :TUCK,
+                :"2DUP", :"2DROP", :"2SWAP", :"2OVER", :>, :<, :=, :AND, :OR, :INVERT, :NOT] ->
+        {:ok, %{state | current_definition: [token | defn]}}
+
+      true ->
+        {:error, "unknown word: #{String.downcase(Atom.to_string(token))}"}
+    end
   end
 
   defp process_token(:";", %{defining: true, current_word: word, current_definition: defn, dictionary: dictionary} = state)

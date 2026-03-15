@@ -19,10 +19,7 @@ config :forth_web, ForthWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
   secret_key_base: "K1mA+GcLz0zqyuea7H7KxufJBFWRA2FKfh194w88A2W4iweQvtsw2GtUhPvmgn0J",
   server: false
-
-# Disable swoosh api client as it is only required for production adapters
-config :swoosh, :api_client, false
-
+  
 # Print only warnings and errors during test
 config :logger, level: :warning
 
