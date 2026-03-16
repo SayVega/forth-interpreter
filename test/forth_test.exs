@@ -311,7 +311,6 @@ defmodule ForthTest do
     test "unknown word in defining mode gets error" do
       assert Forth.eval(": X Y ;") == {:error, "unknown word: y"}
     end
-
   end
 
   describe "additional stack operations" do
@@ -429,6 +428,7 @@ defmodule ForthTest do
       5
       double
       """
+
       assert eval(input) == {:ok, [10]}
     end
   end
