@@ -1,6 +1,6 @@
 <div class="max-w-4xl mx-auto mt-10">
   <h1 class="text-3xl font-bold mb-6 text-center">Forth Interpreter</h1>
-  
+
   <form phx-submit="run" class="space-y-4">
     <textarea
       name="program"
@@ -21,9 +21,9 @@
       </button>
     </div>
   </form>
-  
+
   <h3 class="text-2xl font-bold m-6 text-center">Or</h3>
-  
+
   <form phx-change="upload">
     <div class="flex justify-center">
       <label class="w-1/2 flex items-center justify-center border rounded p-2
@@ -35,7 +35,7 @@
         <.live_file_input upload={@uploads.forth_file} class="hidden" />
       </label>
     </div>
-    
+
     <div class="mt-4 flex flex-col items-center justify-center space-y-2 text-center">
       <%= for entry <- @uploads.forth_file.entries do %>
         <%= for error <- upload_errors(@uploads.forth_file, entry) do %>
@@ -46,7 +46,7 @@
           </div>
         <% end %>
       <% end %>
-      
+
       <%= if @upload_error do %>
         <div class="w-full max-w-md bg-red-50 border border-red-200 text-red-600 text-xs py-2 px-4 rounded font-bold shadow-sm">
           Error: {@upload_error}
@@ -54,30 +54,30 @@
       <% end %>
     </div>
   </form>
-  
+
   <div class="mt-8">
     <h2 class="text-xl font-semibold mb-2">Result</h2>
-     <pre class="bg-black text-green-400 p-4 rounded font-mono"><%=@result %></pre>
+    <pre class="bg-black text-green-400 p-4 rounded font-mono"><%=@result %></pre>
   </div>
-  
+
   <div class="mt-10">
     <details>
       <summary class="text-xl font-semibold cursor-pointer">History</summary>
-      
+
       <div class="space-y-4 mt-4">
         <%= for eval <- @history do %>
           <div class="border rounded p-4">
             <div class="text-sm text-gray-500 mb-1">Source: {eval.source}</div>
-            
+
             <details>
               <summary class="cursor-pointer text-xs text-blue-600 mb-1">show program</summary>
-               <pre class="bg-gray-100 p-2 font-mono text-black overflow-hidden italic">
+              <pre class="bg-gray-100 p-2 font-mono text-black overflow-hidden italic">
                 <%= if eval.program == "", do: "[Empty Program]", else: eval.program %>
               </pre>
             </details>
-            
+
             <div class="text-sm text-gray-500 mt-3 mb-1">Result</div>
-             <pre class="bg-black text-green-400 p-2 font-mono"><%= eval.result %></pre>
+            <pre class="bg-black text-green-400 p-2 font-mono"><%= eval.result %></pre>
             <div class="text-xs text-gray-400 mt-2">{eval.inserted_at}</div>
           </div>
         <% end %>
