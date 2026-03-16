@@ -307,6 +307,10 @@ defmodule ForthTest do
     test "definition without terminator returns error" do
       assert eval(": double dup +") == {:error, "unterminated definition"}
     end
+
+    test "unknown word in defining mode gets error" do
+      assert Forth.eval(": X Y ;") == {:error, "unknown word: y"}
+    end
   end
 
   describe "additional stack operations" do
@@ -407,7 +411,6 @@ defmodule ForthTest do
     end
 
     test "handles tabs and mixed whitespace" do
-      # \t es un tabulador, \r es un retorno de carro
       assert eval("1\t2\r\n+") == {:ok, [3]}
     end
 

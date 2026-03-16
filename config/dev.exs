@@ -1,7 +1,7 @@
 import Config
 
 # Configure your database
-config :forth_web, ForthWeb.Repo,
+config :forth_web, Forth.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
@@ -16,7 +16,7 @@ config :forth_web, ForthWeb.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :forth_web, ForthWebWeb.Endpoint,
+config :forth_web, ForthWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}],
@@ -53,7 +53,7 @@ config :forth_web, ForthWebWeb.Endpoint,
 # different ports.
 
 # Reload browser tabs when matching files change.
-config :forth_web, ForthWebWeb.Endpoint,
+config :forth_web, ForthWeb.Endpoint,
   live_reload: [
     web_console_logger: true,
     patterns: [
@@ -87,6 +87,3 @@ config :phoenix_live_view,
   debug_attributes: true,
   # Enable helpful, but potentially expensive runtime checks
   enable_expensive_runtime_checks: true
-
-# Disable swoosh api client as it is only required for production adapters.
-config :swoosh, :api_client, false

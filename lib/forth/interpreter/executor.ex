@@ -5,8 +5,9 @@ defmodule Forth.Executor do
       defining: false,
       dictionary: %{},
       current_word: nil,
-      current_definition: [],
+      current_definition: []
     }
+
     result =
       Enum.reduce_while(tokens, {:ok, state}, fn token, {:ok, state} ->
         case process_token(token, state) do
@@ -25,10 +26,10 @@ defmodule Forth.Executor do
     end
   end
 
-## Word definition
+  ## Word definition
 
   defp process_token(:":", %{defining: true}) do
-  {:error, "already defining a word"}
+    {:error, "already defining a word"}
   end
 
   defp process_token(:":", state) do
@@ -36,7 +37,7 @@ defmodule Forth.Executor do
   end
 
   defp process_token(token, %{defining: true, current_word: :expect_name} = _state)
-  when is_integer(token) or token == :";" do
+       when is_integer(token) or token == :";" do
     {:error, "invalid word definition"}
   end
 
@@ -44,24 +45,74 @@ defmodule Forth.Executor do
     {:ok, %{state | current_word: token}}
   end
 
-  defp process_token(token, %{defining: true, current_definition: defn, current_word: word} = state)
-    when  token != :";" and word != :expect_name do
-      {:ok, %{state | current_definition: [token | defn]}}
+  defp process_token(
+         token,
+         %{defining: true, current_definition: defn, current_word: word, dictionary: dictionary} =
+           state
+       )
+       when token != :";" and word != :expect_name do
+    cond do
+      is_integer(token) ->
+        {:ok, %{state | current_definition: [token | defn]}}
+
+      Map.has_key?(dictionary, token) or
+          token in [
+            :+,
+            :-,
+            :*,
+            :/,
+            :MOD,
+            :DUP,
+            :DROP,
+            :OVER,
+            :SWAP,
+            :ROT,
+            :NIP,
+            :TUCK,
+            :"2DUP",
+            :"2DROP",
+            :"2SWAP",
+            :"2OVER",
+            :>,
+            :<,
+            :=,
+            :AND,
+            :OR,
+            :INVERT,
+            :NOT
+          ] ->
+        {:ok, %{state | current_definition: [token | defn]}}
+
+      true ->
+        {:error, "unknown word: #{String.downcase(Atom.to_string(token))}"}
+    end
   end
 
-  defp process_token(:";", %{defining: true, current_word: word, current_definition: defn, dictionary: dictionary} = state)
-    when is_atom(word) do
-      new_dictionary = Map.put(dictionary, word, Enum.reverse(defn))
-      {:ok, %{state | defining: false, dictionary: new_dictionary, current_word: nil, current_definition: []}}
+  defp process_token(
+         :";",
+         %{defining: true, current_word: word, current_definition: defn, dictionary: dictionary} =
+           state
+       )
+       when is_atom(word) do
+    new_dictionary = Map.put(dictionary, word, Enum.reverse(defn))
+
+    {:ok,
+     %{
+       state
+       | defining: false,
+         dictionary: new_dictionary,
+         current_word: nil,
+         current_definition: []
+     }}
   end
 
-## Pushing numbers
+  ## Pushing numbers
 
   defp process_token(number, %{stack: stack} = state) when is_integer(number) do
     {:ok, %{state | stack: [number | stack]}}
   end
 
-## Arithmetic operations
+  ## Arithmetic operations
 
   defp process_token(:+, %{stack: [a, b | rest]} = state) do
     {:ok, %{state | stack: [b + a | rest]}}
@@ -111,7 +162,7 @@ defmodule Forth.Executor do
     {:error, "stack underflow"}
   end
 
-## Stack manipulation
+  ## Stack manipulation
 
   defp process_token(:DUP, %{stack: [a | rest]} = state) do
     {:ok, %{state | stack: [a, a | rest]}}
@@ -201,7 +252,7 @@ defmodule Forth.Executor do
     {:error, "stack underflow"}
   end
 
-## Comparison operations
+  ## Comparison operations
 
   defp process_token(:>, %{stack: [a, b | rest]} = state) do
     value = if b > a, do: -1, else: 0
@@ -212,7 +263,7 @@ defmodule Forth.Executor do
     {:error, "stack underflow"}
   end
 
-    defp process_token(:<, %{stack: [a, b | rest]} = state) do
+  defp process_token(:<, %{stack: [a, b | rest]} = state) do
     value = if b < a, do: -1, else: 0
     {:ok, %{state | stack: [value | rest]}}
   end
@@ -230,7 +281,7 @@ defmodule Forth.Executor do
     {:error, "stack underflow"}
   end
 
-## Bitwise operations
+  ## Bitwise operations
 
   defp process_token(:AND, %{stack: [a, b | rest]} = state) do
     {:ok, %{state | stack: [Bitwise.band(b, a) | rest]}}
@@ -256,7 +307,7 @@ defmodule Forth.Executor do
     {:error, "stack underflow"}
   end
 
-## Boolean operations
+  ## Boolean operations
 
   defp process_token(:NOT, %{stack: [a | rest]} = state) do
     value = if a == 0, do: -1, else: 0
@@ -267,7 +318,7 @@ defmodule Forth.Executor do
     {:error, "stack underflow"}
   end
 
-## Dictionary execution
+  ## Dictionary execution
 
   defp process_token(token, %{dictionary: dictionary} = state) when is_atom(token) do
     case Map.get(dictionary, token) do
@@ -284,7 +335,7 @@ defmodule Forth.Executor do
     end
   end
 
-## Undefined words
+  ## Undefined words
 
   defp process_token(_unknown, %{stack: _stack}) do
     {:error, "undefined word"}

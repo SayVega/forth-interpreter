@@ -1,4 +1,4 @@
-defmodule ForthWebWeb.Endpoint do
+defmodule ForthWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :forth_web
 
   # The session will be stored in the cookie and signed,
@@ -24,7 +24,7 @@ defmodule ForthWebWeb.Endpoint do
     at: "/",
     from: :forth_web,
     gzip: not code_reloading?,
-    only: ForthWebWeb.static_paths(),
+    only: ForthWeb.static_paths(),
     raise_on_missing_only: code_reloading?
 
   # Code reloading can be explicitly enabled under the
@@ -41,7 +41,6 @@ defmodule ForthWebWeb.Endpoint do
     cookie_key: "request_logger"
 
   plug Plug.RequestId
-  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
@@ -51,5 +50,5 @@ defmodule ForthWebWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug ForthWebWeb.Router
+  plug ForthWeb.Router
 end
