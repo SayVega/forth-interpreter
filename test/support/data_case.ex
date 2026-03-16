@@ -1,4 +1,4 @@
-defmodule ForthWeb.DataCase do
+defmodule Forth.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -18,17 +18,17 @@ defmodule ForthWeb.DataCase do
 
   using do
     quote do
-      alias ForthWeb.Repo
+      alias Forth.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import ForthWeb.DataCase
+      import Forth.DataCase
     end
   end
 
   setup tags do
-    ForthWeb.DataCase.setup_sandbox(tags)
+    Forth.DataCase.setup_sandbox(tags)
     :ok
   end
 
@@ -36,7 +36,7 @@ defmodule ForthWeb.DataCase do
   Sets up the sandbox based on the test tags.
   """
   def setup_sandbox(tags) do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(ForthWeb.Repo, shared: not tags[:async])
+    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Forth.Repo, shared: not tags[:async])
     on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
   end
 

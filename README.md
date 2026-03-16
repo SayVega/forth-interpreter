@@ -1,18 +1,16 @@
-# ForthWeb
+# Forth Interpreter (Elixir)
 
-To start your Phoenix server:
+A minimal interpreter for the Forth programming language implemented in Elixir.
 
-* Run `mix setup` to install and setup dependencies
-* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+It supports execution of Forth programs with integer arithmetic, stack
+manipulation, and user-defined words.
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+The evaluator is available through a web interface built with Phoenix
+LiveView, where users can upload programs, run evaluations, view results,
+and browse the history of previous executions.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+Programs and their executions are persisted in PostgreSQL.
 
-## Learn more
+## Documentation
 
-* Official website: https://www.phoenixframework.org/
-* Guides: https://hexdocs.pm/phoenix/overview.html
-* Docs: https://hexdocs.pm/phoenix
-* Forum: https://elixirforum.com/c/phoenix-forum
-* Source: https://github.com/phoenixframework/phoenix
+Detailed documentation is available [`here`](docs/README.md)

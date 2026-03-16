@@ -5,7 +5,7 @@ import Config
 # The MIX_TEST_PARTITION environment variable can be used
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
-config :forth_web, ForthWeb.Repo,
+config :forth_web, Forth.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
@@ -15,16 +15,10 @@ config :forth_web, ForthWeb.Repo,
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :forth_web, ForthWebWeb.Endpoint,
+config :forth_web, ForthWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
   secret_key_base: "K1mA+GcLz0zqyuea7H7KxufJBFWRA2FKfh194w88A2W4iweQvtsw2GtUhPvmgn0J",
   server: false
-
-# In test we don't send emails
-config :forth_web, ForthWeb.Mailer, adapter: Swoosh.Adapters.Test
-
-# Disable swoosh api client as it is only required for production adapters
-config :swoosh, :api_client, false
 
 # Print only warnings and errors during test
 config :logger, level: :warning

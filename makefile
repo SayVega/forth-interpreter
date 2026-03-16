@@ -1,23 +1,8 @@
-.PHONY: setup deps db_create db_reset migrate seed server iex test clean
+.PHONY: setup server iex test clean db_reset seed
 
-setup: deps db_create migrate
-
-deps:
-	mix deps.get
-
-db_create:
-	mix ecto.create
-
-db_reset:
-	mix ecto.drop
-	mix ecto.create
-	mix ecto.migrate
-
-migrate:
-	mix ecto.migrate
-
-seed:
-	mix run priv/repo/seeds.exs
+setup:
+	mix setup
+	mix compile
 
 server:
 	mix phx.server
@@ -29,6 +14,12 @@ test:
 	MIX_ENV=test mix ecto.create --quiet
 	MIX_ENV=test mix ecto.migrate --quiet
 	mix test
+
+db_reset:
+	mix ecto.reset
+
+seed:
+	mix run priv/repo/seeds.exs
 
 clean:
 	mix clean
